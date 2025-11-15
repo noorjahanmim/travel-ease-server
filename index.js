@@ -30,6 +30,22 @@ async function run() {
     const modelCollection = db.collection('models')
     const bookingsCollection = db.collection('bookings');
 
+
+    app.get('/models', async (req, res) => {
+  try {
+    
+    const result = await modelCollection.find()
+      .sort({ createdAt: -1 })   
+      .limit(6)                  
+      .toArray();
+
+    res.send(result);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to fetch vehicles" });
+  }
+});
+
+
     // app.get('/models', async(req, res) => {
 
     //   const result = await modelCollection.find().toArray()
@@ -37,10 +53,10 @@ async function run() {
     //   res.send(result)
     // })
 
-    app.get('/models', async(req, res)=> {
-                const result = await modelCollection.find().sort({createdAt: -1}).limit(6).toArray();
-                res.send(result);
-            })
+    // app.get('/models', async(req, res)=> {
+    //             const result = await modelCollection.find().sort({createdAt: -1}).limit(6).toArray();
+    //             res.send(result);
+    //         })
 
 
 //     app.get('/models', async (req, res) => {
@@ -51,7 +67,7 @@ async function run() {
 //   }
 
 //   try {
-//     const result = await modelCollection.find(query).toArray();
+//     const result = await modelCollection.find(query).sort({createdAt: -1}).limit(6).toArray();
 //     res.send(result);
 //   } catch (err) {
 //     res.status(500).send({ message: "Failed to fetch vehicles" });
