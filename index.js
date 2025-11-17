@@ -103,35 +103,23 @@ async function run() {
     //   }
     // });
 
-    app.post('/bookings', async (req, res) => {
-  const { userEmail, vehicleId } = req.body;
+    app.get('/myBookings', async (req, res) => {
+  const email = req.query.email;
+
+  if (!email) {
+    return res.status(400).send({ message: "Email is required" });
+  }
 
   try {
-    
-    const existingBooking = await bookingsCollection.findOne({ userEmail, vehicleId });
-    if (existingBooking) {
-      return res.status(400).send({ message: "You have already booked this vehicle" });
-    }
+    const bookings = await bookingsCollection
+      .find({ userEmail: email })
+      .sort({ createdAt: -1 })
+      .toArray();
 
-    const vehicle = await modelCollection.findOne({ _id: new ObjectId(vehicleId) });
-    if (!vehicle) return res.status(404).send({ message: "Vehicle not found" });
-
-   
-    const booking = {
-      ...req.body,
-      coverImage: vehicle.coverImage,
-      vehicleName: vehicle.vehicleName,
-      category: vehicle.category,
-      location: vehicle.location,
-      pricePerDay: vehicle.pricePerDay,
-      createdAt: new Date(),
-    };
-
-    const result = await bookingsCollection.insertOne(booking);
-    res.send(result);
+    res.send(bookings);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: "Booking failed" });
+    res.status(500).send({ message: "Failed to fetch bookings" });
   }
 });
 
