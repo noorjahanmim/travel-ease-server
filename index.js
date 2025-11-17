@@ -31,21 +31,10 @@ async function run() {
     const bookingsCollection = db.collection('bookings');
 
 
-    app.get('/models', async (req, res) => {
-  try {
-    
-    const result = await modelCollection.find()
-      .sort({ createdAt: -1 })   
-      .limit(6)                  
-      .toArray();
-
-    res.send(result);
-  } catch (err) {
-    res.status(500).send({ message: "Failed to fetch vehicles" });
-  }
-});
-
-
+    app.get('/models', async(req, res)=> {
+                const result = await modelCollection.find().sort({createdAt: -1}).limit(6).toArray();
+                res.send(result);
+            })
     // app.get('/models', async(req, res) => {
 
     //   const result = await modelCollection.find().toArray()
@@ -89,7 +78,7 @@ async function run() {
 
 
 app.post('/models', async (req, res) => {
-  const vehicle = req.body;
+  const vehicle = { ...req.body, createdAt: new Date() };
   try {
     const result = await modelCollection.insertOne(vehicle);
     res.send(result);
