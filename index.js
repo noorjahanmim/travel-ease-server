@@ -122,6 +122,42 @@ async function run() {
     res.status(500).send({ message: "Failed to fetch bookings" });
   }
 });
+  
+
+
+app.post('/bookings', async (req, res) => {
+  const { userEmail, vehicleId } = req.body;
+
+  try {
+    
+    const existingBooking = await bookingsCollection.findOne({ userEmail, vehicleId });
+    if (existingBooking) {
+      return res.status(400).send({ message: "You have already booked this vehicle" });
+    }
+
+   
+    const vehicle = await modelCollection.findOne({ _id: new ObjectId(vehicleId) });
+    if (!vehicle) return res.status(404).send({ message: "Vehicle not found" });
+
+    
+    const booking = {
+      userEmail,
+      vehicleId,
+      vehicleName: vehicle.vehicleName,
+      coverImage: vehicle.coverImage,
+      category: vehicle.category,
+      location: vehicle.location,
+      pricePerDay: vehicle.pricePerDay,
+      createdAt: new Date()
+    };
+
+    const result = await bookingsCollection.insertOne(booking);
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Booking failed" });
+  }
+});
 
 
 
