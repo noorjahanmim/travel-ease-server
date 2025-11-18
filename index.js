@@ -37,15 +37,6 @@ async function run() {
     })
 
 
-    //             app.get('/models', async(req, res)=> {
-    //   const result = await modelCollection
-    //     .find()
-    //     .sort({createdAt: -1})
-    //     .toArray();
-    //   res.send(result);
-    // });
-
-
     app.get('/models', async (req, res) => {
       const { userEmail } = req.query;  
       const query = {};
@@ -64,8 +55,6 @@ async function run() {
         res.status(500).send({ message: "Failed to fetch vehicles" });
       }
     });
-
-
 
 
     app.get('/models/:id', async (req, res) => {
@@ -91,17 +80,6 @@ async function run() {
       }
     });
 
-
-
-    // app.get('/myBookings', async (req, res) => {
-    //   const email = req.query.email;
-    //   try {
-    //     const bookings = await bookingsCollection.find({ userEmail: email }).toArray();
-    //     res.send(bookings);
-    //   } catch (err) {
-    //     res.status(500).send({ message: "Failed to fetch bookings" });
-    //   }
-    // });
 
     app.get('/myBookings', async (req, res) => {
   const email = req.query.email;
